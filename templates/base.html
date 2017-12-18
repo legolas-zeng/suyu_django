@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测试系统</title>
+<link href="/static/css/style-base.css" rel="stylesheet">
+</head>
+<body>
+<div class="htmleaf-container">
+	<nav class="animenu ">
+	  <button class="animenu__toggle">
+		<span class="animenu__toggle__bar"></span>
+		<span class="animenu__toggle__bar"></span>
+		<span class="animenu__toggle__bar"></span>
+	  </button>
+	  <ul class="animenu__nav">
+		<li {% block nav_hostlist %}{% endblock %}>
+		  <a href="{% url 'index' %}">首页</a>
+		</li>
+		<li>
+		  <a href="#">主机</a>
+		  <ul class="animenu__nav__child">
+			<li><a href="{% url 'hostlistinfo' %}">详情</a></li>
+			<li><a href="{% url 'test' %}">图表</a></li>
+			<li><a href="">Sub Item 3</a></li>
+		  </ul>
+		</li>     
+		<li>
+		  <a href="#">运行</a>
+		  <ul class="animenu__nav__child">
+			<li><a href="{%url 'command_page' %}">模块运行</a></li>
+			<li><a href="">Sub Item 2</a></li>
+		  </ul>
+		</li>
+		<li>
+		  <a href="#">附加功能</a>
+          <ul class="animenu__nav__child">
+              <li><a href="{%url 'server_upload' %} ">文件上传</a></li>
+              <li><a href="{%url 'upload_list' %} ">上传列表</a></li>
+           </ul>
+		</li>
+		<li>
+		  <a href="#">测试功能</a>
+            <ul class="animenu__nav__child">
+                <li><a href="{%url 'test_5' %} ">多文件上传</a></li>
+                <li><a href="{%url 'test_4' %} ">单文件上传</a></li>
+                <li><a href="{%url 'test_6' %} ">文件删除</a></li>
+            </ul>
+		</li>
+        <li>
+		  <a href="#">mysql</a>
+            <ul class="animenu__nav__child">
+                <li><a href="#">suyusys</a></li>
+
+            </ul>
+		</li>
+	  </ul>
+	</nav>
+	
+	{% block content %}
+	{% endblock%}
+	
+	
+</div>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/jquery.dataTables.min.js"></script>
+<script src="/static/js/dataTables.bootstrap.js"></script>
+{% block js %}{% endblock %}
+<script type="text/javascript">
+    $(function () {
+        {% block scripts %}
+        {% endblock %}
+    });
+</script>
+</body>
+</html>

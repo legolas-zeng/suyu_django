@@ -1,0 +1,225 @@
+{% extends 'newindex.html' %}
+{% load static %}
+
+{% block nav_saltstack_list %}active{% endblock %}
+{% block nav_saltstack %}active{% endblock %}
+
+{%  block head %}
+    <link href="/static/css/saltstack/bootstrap-select.css" rel="stylesheet" />
+    <link href="/static/css/saltstack/select2.css" rel="stylesheet" type="text/css" />
+    <link href="/static/css/saltstack/multi-select.css"  rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/css/saltstack/xterm.css" />
+    <link rel="stylesheet" href="/static/css/saltstack/style.css" />
+{#    <script src="/static/js/jquery-3.2.1.min.js"></script>#}
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/saltstack/xterm.js"></script>
+    <style>
+        #sidebar-menu ul ul a.hover {
+           color: #fff;
+            background-color: #5fbeaa;
+        }
+        #sidebar-menu ul ul a.hover:hover {
+           color: #fff;
+            background-color: #5fbeaa;
+        }
+    </style>
+    {% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="row">
+                   <div class="col-md-8" >
+                        <form class="form-horizontal" role="form" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Minion组</label>
+                                <div class="col-sm-10">
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="minion_group" name="minion_group">
+                                            <option value="">-----select------</option>
+                                            {% for group in GroupData %}
+                                            <option value="{{group.id}}">{{group.groupname}}</option>s
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">目标主机</label>
+                                <div class="col-sm-10">
+                                    <div class="col-sm-6" id="HOST">
+                                          <select class="select2 select2-multiple" multiple="multiple" multiple data-placeholder="选择组中的minion">
+                                          </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Saltenv</label>
+                                <div class="col-sm-10">
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" name="env" placeholder="prod" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">软件列表</label>
+                                <div class="col-sm-10">
+                                    {% for i in SoftModuleData %}
+                                    <div class="col-sm-2">
+                                        <div class="checkbox checkbox-pink">
+                                            <input id="checkbox{{i.id}}" name="software" value="{{i.models_site}}" type="checkbox" data-parsley-multiple="groups" data-parsley-mincheck="2" data-parsley-id="69">
+                                            <label for="checkbox{{i.id}}"> {{i.name}} </label>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-4 col-sm-8 m-t-15">
+                                    <button type="button" onclick="Exec()" class="btn btn-primary">
+                                        部署
+                                    </button>
+                                    <button type="reset" class="btn btn-default m-l-5">
+                                        重置
+                                    </button>
+                                </div>
+							</div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div class="row">
+         <div class="col-sm-12">
+            <p><b>实时结果输出:</b></p>
+		 </div>
+        <div class="col-md-9">
+            <div class="card-box" id="result" style="OVERFLOW-Y: auto;color: #00af00;  OVERFLOW-X:hidden;background-color: #1c1c1c;height: 600px">
+
+            </div>
+        </div>
+
+          <div class="col-md-3">
+            <div class="card-box"  style="OVERFLOW-Y: auto;color: white;  OVERFLOW-X:hidden;background-color: #1c1c1c;height: 600px">
+                <p>结果输出:</p>
+                <div id="success" style="color: #00af00">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+</div>
+{% block js %}
+<script type="text/javascript" src="/static/js/saltstack/jquery.multi-select.js"></script>
+<script src="/static/js/saltstack/select2.min.js" type="text/javascript"></script>
+<script src="/static/js/saltstack/bootstrap-select.min.js" type="text/javascript"></script>
+    {% endblock %}
+
+{% include  "saltstack/foot_script.html" %}
+{% block scripts %}
+<script>
+    var hosts = {{ groupall | safe}};
+    jQuery(document).ready(function(){
+        $(".select2").select2();
+
+        $('#minion_group').change(function() {
+            var $this = $(this);
+            var destinationHost = [];
+
+            hosts.forEach(function (host) {
+                if($this.val() == host.type) {
+                    destinationHost = host.list;
+                }
+            });
+            var optionsHtml = '';
+            destinationHost.forEach(function(host) {
+                optionsHtml += '<option value="'+host.id+'">'+host.text+'</option>'
+            });
+            var selectHtml = '<select class="select2 select2-multiple" name="minion" multiple="multiple" multiple data-placeholder="选择组中的minion">' +
+                               optionsHtml + '</select>';
+            $('#HOST').html('');
+            $('#HOST').append(selectHtml);
+            $(".select2").select2();
+        });
+    });
+</script>
+
+<script>
+    var timer;
+    function Exec(){
+        if($('#minion_group').val() == ''){
+            alert("选择Minion组!!!!");
+
+        };
+
+        $.ajax({
+            method: 'post',
+            dataType:'json',
+            data:$('.form-horizontal').serialize(),
+            url: "{% url 'SoftInstall' %}",
+            success: function (data) {
+                var jid = data.jid;
+                var minion = data.minion;
+                var savelogid = data.savelogid;
+                document.getElementById("result").innerHTML='正在部署软件模块......</br>';
+                //timer = setInterval(function() {
+                cmd_result(jid,minion,savelogid);
+                //},5000);
+            },
+            error: function () {
+
+            }
+        })
+    }
+
+    function cmd_result(jid,minion,savelogid) {
+        $.ajax({
+            method: 'get',
+            dataType: 'json',
+            data: {
+                'minion':minion,
+                'savelogid':savelogid,
+            },
+            url: "/salt/deployresult/" + jid,
+            success: function (data) {
+                var dataHtml = '';
+                var ResultHtml= '';
+                data.resultdata.forEach(function(resultdata) {
+                    dataHtml += '<br/><br/>' + resultdata.url + ':<br/>';
+                    ResultHtml += '<br/>' + resultdata.url + ':<br/>';
+                    ResultHtml += new Array(50).join("-") + '</br>';
+                    ResultHtml += 'Succeeded:' + resultdata.success + '<br/>';
+                    ResultHtml += '<p style="color: red;">Failed:' + resultdata.error + '</p>';
+                    ResultHtml += new Array(50).join("-") + '</br>';
+                    resultdata.result.forEach(function(result) {
+                        dataHtml += new Array(100).join("-") + '</br>';
+                        if (result.Result== false){
+                            dataHtml += '<p style="color: red">'
+                        }
+                        for(var k in result){
+                            if(k === 'Changes') {
+                                dataHtml += k + ':\t' + JSON.stringify(result[k]) + '<br/>';
+                            } else {
+                                dataHtml += k + ':\t' + result[k] + '<br/>';
+                            }
+                        }
+                        if (result.Result== false){
+                            dataHtml += '</p>'
+                        }
+                    });
+                });
+                $('#result').html(dataHtml);
+                $('#success').html(ResultHtml);
+            },
+            error: function () {
+            }
+        })
+    }
+</script>
+    {% endblock %}
+
+

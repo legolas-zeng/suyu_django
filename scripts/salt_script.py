@@ -1,0 +1,1 @@
+# -*-coding:utf-8 -*-from commands import getstatusoutput as gsodef test():	cmd="free -m|grep -w cache| awk '{print $4}'"	status, result = gso(cmd)	if status != 0:		result = 0	print result	return resulttest()
