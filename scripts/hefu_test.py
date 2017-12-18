@@ -49,7 +49,7 @@ def post_info(pro,status):
         'hefu_id':hefu_id
     }
     data = json.dumps(info)
-    r = requests.post('http://192.168.2.120/hefu_progress', data=data)
+    r = requests.post('http://192.168.2.120/hefu_progress_api', data=data)
     print r.status_code
 
 if __name__ == '__main__':

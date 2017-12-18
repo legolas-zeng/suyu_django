@@ -81,7 +81,40 @@ def Notifications(request,template='suyusys/Notifications.html'):
 	pass
 def hefu_game(request,template='suyusys/hefu_game_plan.html'):
 	hefu_count = ret_info()
+	db_key = 'china_gmdb'
+	db_info = DB_INFO.get(db_key)
+	db = MySQLdb.connect(host=db_info['host'], user=db_info['user'], passwd=db_info['pwd'], db=db_info['dbname'],
+	                     port=db_info['port'])
+	cursor_now = db.cursor()
+	cursor_now.execute("select id from server_combine order by id desc limit 1;")
+	datas = cursor_now.fetchall()
+	for datas in datas:
+		for now_id in datas:
+			print now_id
+	now_ids=hefuinfo.objects.filter(hefuid=now_id)
+	if now_ids:
+		print 100
+		# cursor_hefu = db.cursor()
+		# cursor_hefu.execute("select * from server_combine where status='1';")
+		# hefu_data = cursor_hefu.fetchall()
+		# hefu_info = list()
+		# for hefu_datas in hefu_data:
+		# 	hefuid = hefu_datas[0]
+		# 	game = hefu_datas[1]
+		# 	platform = hefu_datas[2]
+		# 	area = hefu_datas[3]
+		# 	serverid = hefu_datas[4]
+		# 	serverids = hefu_datas[5]
+		# 	apply_time = hefu_datas[6]
+		# 	status = hefu_datas[7]
+		# 	combine_time = hefu_datas[8]
+		# 	print hefuid,game,platform,area,serverid,serverids,apply_time,status,combine_time
+		# hefu_info.append(hefuinfo(hefuid=hefuid,game=game,platform=platform,area=area,server_id=serverid,server_ids=serverids,apply_time=apply_time,status=status,combine_time=combine_time))
+		# hefuinfo.objects.bulk_create(hefu_info)
+	else:
+		print 200
 	context = {
+		'hefu_datas':hefu_data,
 		'hefu_count': hefu_count
 	}
 	return render(request,template,context)
@@ -93,16 +126,23 @@ def hefu_input(request,template='suyusys/hefu_input.html'):
 		'''获取到合服订单ID后这里写合服功能代码'''
 		'''额外传合服订单ID给合服脚本'''
 @csrf_exempt
-def hefu_progress(request,template='suyusys/hefu_progress.html'):
+def hefu_progress_api(request,template='suyusys/hefu_progress_api.html'):
 	if request.method == 'POST':
 		req = json.loads(request.body)
 		pro = req.get('pro')
+		proed = str(pro*25) + '%'
+		print proed
 		status = req.get('status')
 		hefu_id = req.get('hefu_id')
 		print pro, status, hefu_id
-		results = test(hostip, modelname)
-		return HttpResponse(json.dumps(results))
-			
+		test = {'proed':proed,
+		        'status':status,
+		        'hefu_id':hefu_id
+				}
+		return HttpResponse(json.dumps(test))
+@csrf_exempt
+def hefu_progress(request,template='suyusys/hefu_progress.html'):
 	return render(request,template)
+
 def file_upload(request,template='suyusys/File_upload.html'):
 	return render(request,template)

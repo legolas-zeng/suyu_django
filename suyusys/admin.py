@@ -7,8 +7,8 @@ from suyusys.models import *
 class DbServersRedisAdmin(admin.ModelAdmin):
 	list_display = ['hostip','port','monitor','role','alive','connected']
 	list_display_links = ['hostip']
-
-
-
+class hefuinfoAdmin(admin.ModelAdmin):
+	list_display = ['hefuid','platform','area','server_id','server_ids','status','combine_time','success']
 
 admin.site.register(DbServersRedis,DbServersRedisAdmin)
+admin.site.register(hefuinfo,hefuinfoAdmin)

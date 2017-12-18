@@ -48,5 +48,6 @@ urlpatterns = [
  url(r'^File_upload', sviews.file_upload),
  url(r'^hefu_input', sviews.hefu_input),
  url(r'^hefu_progress', sviews.hefu_progress),
+ url(r'^hefu_progress_api', sviews.hefu_progress_api),
 ]
 urlpatterns += staticfiles_urlpatterns()

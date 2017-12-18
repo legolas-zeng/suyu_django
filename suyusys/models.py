@@ -30,3 +30,18 @@ class Redisinfotest(models.Model):
 	alive = models.BooleanField(default=False)
 	connected = models.CharField(max_length=255, default=0)
 	autoTime = models.DateTimeField(verbose_name=u"上报时间", auto_now_add=True)
+class hefuinfo(models.Model):
+	hefuid = models.CharField(unique=True,verbose_name=u"合服订单号",max_length=255)
+	game = models.CharField(verbose_name=u"游戏版本",max_length=255,default='golden')
+	platform = models.CharField(max_length=255,verbose_name=u"平台")
+	area = models.CharField(verbose_name=u"区服号",max_length=255)
+	server_id = models.CharField(verbose_name=u"主服ID",max_length=255)
+	server_ids = models.CharField(verbose_name=u"合并服ID",max_length=255)
+	apply_time = models.DateTimeField(verbose_name=u"申请时间",max_length=255)
+	status = models.CharField(verbose_name=u"订单状态",max_length=255)
+	combine_time = models.DateTimeField(verbose_name=u"合服时间",max_length=255)
+	progress = models.CharField(verbose_name=u"合服进度",default=0,max_length=255)
+	success = models.BooleanField(default=False,verbose_name=u"是否完成")
+	class Meta:
+		verbose_name = u'合服列表'
+		verbose_name_plural = u'合服详情'
