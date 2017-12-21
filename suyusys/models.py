@@ -32,6 +32,7 @@ class Redisinfotest(models.Model):
 	autoTime = models.DateTimeField(verbose_name=u"上报时间", auto_now_add=True)
 class hefuinfo(models.Model):
 	hefuid = models.CharField(unique=True,verbose_name=u"合服订单号",max_length=255)
+	ip = models.GenericIPAddressField(verbose_name=u"主服ip",max_length=255,default='0.0.0.0')
 	game = models.CharField(verbose_name=u"游戏版本",max_length=255,default='golden')
 	platform = models.CharField(max_length=255,verbose_name=u"平台")
 	area = models.CharField(verbose_name=u"区服号",max_length=255)
@@ -41,7 +42,13 @@ class hefuinfo(models.Model):
 	status = models.CharField(verbose_name=u"订单状态",max_length=255)
 	combine_time = models.DateTimeField(verbose_name=u"合服时间",max_length=255)
 	progress = models.CharField(verbose_name=u"合服进度",default=0,max_length=255)
-	success = models.BooleanField(default=False,verbose_name=u"是否完成")
+	success = models.IntegerField(default=0,verbose_name=u"是否完成")
+	main_server_ip = models.GenericIPAddressField(max_length=255,default='0.0.0.0')
+	'''
+	success = 0 没有合服
+	success = 1 等待合服
+	success = 2 开始完成
+	success = 3 完成合服 '''
 	class Meta:
 		verbose_name = u'合服列表'
 		verbose_name_plural = u'合服详情'
