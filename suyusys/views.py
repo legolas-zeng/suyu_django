@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.shortcuts import render
 from django.shortcuts import render,render_to_response,redirect
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse,request,Http404
 from django.contrib.auth import authenticate, login, logout
@@ -14,11 +13,12 @@ from django import forms
 from suyu.models import *
 from suyusys.models import *
 from suyu.models import redisinfo
-import json
+import json,sys
 import datetime
 import os
 from scripts.constant import DB_INFO
 import MySQLdb
+from scripts import hefu_test
 
 # Create your views here.
 def newindex(request,template='newindex.html'):
@@ -95,7 +95,7 @@ def hefu_game(request,template='suyusys/hefu_game_plan.html'):
 	'''now_id  数据库合服ID最大值
 	   now_ids sqlite数据库合服ID最大值'''
 	# now_id_exit=hefuinfo.objects.filter(hefuid=now_id)
-	cursor_now.close()
+	
 	now_id_ob = hefuinfo.objects.order_by("-hefuid")[0:1].get() # 逆向排序取最大ID
 	now_ids = int(now_id_ob.hefuid)
 	print u"本地数据库最大ID：", now_ids
@@ -130,53 +130,81 @@ def hefu_game(request,template='suyusys/hefu_game_plan.html'):
 		cursor_hefu.close()
 	else:
 		print u"合服数据库没有更新"
+	status_id = hefuinfo.objects.filter(status=1).values('hefuid')
+	for status_ids in status_id:
+		for id in status_ids.values():
+			print id
+			cursor_now.execute('select status from server_combine where id=%s',id)
+			status = cursor_now.fetchall()
+			for statuss in status:
+				for sta in statuss:
+					hefuinfo.objects.filter(hefuid=id).update(status=sta) # 后台提交，更改数据库status状态
+	cursor_now.close()
 	db.close()
-	hefu_data = hefuinfo.objects.filter(status=1)
-	
+	hefu_data = hefuinfo.objects.filter(status=1)                         # 只返回status=1的订单
 	context = {
 		'hefu_datas':hefu_data,
 		'hefu_count': hefu_count
 	}
 	return render(request,template,context)
 @csrf_exempt
-def HefuInput(request,template='suyusys/HefuInput.html'):
+def HefuInput(request,template='suyusys/HefuInput.html'): # 提交开始合服
 	if request.method == 'POST':
 		hefu_list = json.loads(request.body)
 		ip = hefu_list.get('ip')
 		id = hefu_list.get('hefuid')
-		print ip, id
+		dic = {}
 		for ids in id:
-			hefuinfo.objects.filter(hefuid=ids).update(success=1)
-		
+			hefuinfo.objects.filter(hefuid=ids).update(success=1) # 订单状态改为正在合服
+		for k, v in zip(ip, id):
+			dic.setdefault(k, []).append(v)
+		a = len(dic)
+		i = 0
+		for i in range(0, a):
+			list_info = dic.items()[i]
+			id_list = list_info[1]
+			ip_list = list_info[0]
+			print ip_list
+			dc = len(id_list)
+			for id_info in id_list:
+				print id_info
+				hefu_id = hefuinfo.objects.filter(hefuid=id_info).values('server_id')
+				hefu_ids = hefuinfo.objects.filter(hefuid=id_info).values('server_ids')
+				print hefu_id,hefu_ids
+			'''提取区服号，调用salt模块执行'''
 @csrf_exempt
-def HefuProgressApi(request):
+def HefuProgressApi(request):  # 接收合服脚本返回的合服进度
     if request.method=='POST':
         req=json.loads(request.body)
         hostdata=list()
         print req
         pro = req.get('pro')
-        # proed = str(pro * 25) + '%'
-        # print proed
+        proed = str(pro * 25)
+        print proed
         hefu_id = req.get('hefu_id')
         print hefu_id
         T = hefuinfo.objects.get(hefuid=hefu_id)
-        T.progress = pro
+        T.progress = proed
         T.save()
     return HttpResponse('1')
 @csrf_exempt
 def HefuProgress(request,template='suyusys/HefuProgress.html'):
-	hefu_list = hefuinfo.objects.filter(success__gte=0)
+	hefu_list = hefuinfo.objects.filter(success__gte=1)
 	hefu_count = ret_info()
 	context = {
 		'hefu_list': hefu_list,
 		'hefu_count':hefu_count
 	}
 	return render(request, template, context)
-
-
+@csrf_exempt
+def hefu_log_api(request): # 发送合服详细日志的
+	if request.method == 'POST' :
+		req = json.loads(request.body)
+		hostdata = list()
+		print req
 @csrf_exempt
 def HefuProgressSearch(request):
-	if request.method == 'POST':
+	if request.method == 'POST': # 发送合服进度给web
 		fileid_list = json.loads(request.body)
 		print fileid_list
 		hefu_list = list(hefuinfo.objects.filter(success__gte = 0).values('hefuid','progress'))
