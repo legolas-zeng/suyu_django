@@ -37,17 +37,19 @@ urlpatterns = [
  # about redis
  url(r'^redisreport',views.redisreport, name='redisreport'),
  url(r'^newindex',sviews.newindex),
- url(r'^redis-info',sviews.redis_info),
+ url(r'^redis-info',sviews.redis_info, name='redis-info'),
  url(r'^echart_redis/$',sviews.echart_redis),
  url(r'^api/apichartredis/$',sviews.Api_echart_redis),
  
  # about sususys
  url(r'^globa_setting', sviews.globa_setting),
  url(r'^Notifications', sviews.Notifications),
- url(r'^hefu_game_plan', sviews.hefu_game),
+ url(r'^hefu_game_plan\.jsp', sviews.hefu_game, name='hefu_game_plan'),
  url(r'^File_upload', sviews.file_upload),
- url(r'^hefu_input', sviews.hefu_input),
- url(r'^hefu_progress', sviews.hefu_progress),
- url(r'^hefu_progress_api', sviews.hefu_progress_api),
+ url(r'^HefuInput', sviews.HefuInput),
+ url(r'^HefuProgress', sviews.HefuProgress),
+ url(r'^Hefu_Progress_Api', sviews.HefuProgressApi),
+ url(r'^Hefu_Progress_Search', sviews.HefuProgressSearch,name='HefuProgressSearch'),
+ url(r'^hefu_log_api', sviews.hefu_log_api,name='hefu_log_api'),
 ]
 urlpatterns += staticfiles_urlpatterns()

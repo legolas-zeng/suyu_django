@@ -63,7 +63,7 @@ def login(request,template='login.html'):
     }
     return render(request,template,context)
 @csrf_exempt
-def apireport(request,templata='apireport.html'):
+def apireport(request):
     if request.method=='POST':
         req=json.loads(request.body)
         hostdata=list()
@@ -202,10 +202,9 @@ def upload_list(request,template='upload_list.html'):
     }
     return render(request,template,context)
 @csrf_exempt
-def upload_del(request,template='test_6.html'):
+def upload_del(request):
     if request.method=='POST':
         fileid_list = json.loads(request.body)
-        #fileid=request.POST.get(request.body)
         files_info = []
         print fileid_list
         print type(fileid_list)

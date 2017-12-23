@@ -42,14 +42,15 @@ def run_hefu():
     save_hefu_log(u"执行合服脚本成功")
     # save_hefu_log(u"执行合服脚本失败")
 def post_info(pro,status):
-    hefu_id = '1011' #
+    hefu_id = '539' #
     info = {
         'pro':pro,
         'status':status,
         'hefu_id':hefu_id
     }
     data = json.dumps(info)
-    r = requests.post('http://192.168.2.120/hefu_progress_api', data=data)
+    print data
+    r = requests.post('http://192.168.2.120/Hefu_Progress_Api', data=data)
     print r.status_code
 
 if __name__ == '__main__':

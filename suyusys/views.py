@@ -13,12 +13,13 @@ from django import forms
 from suyu.models import *
 from suyusys.models import *
 from suyu.models import redisinfo
-import json,sys
+import json,sys,urllib
 import datetime
 import os
 from scripts.constant import DB_INFO
 import MySQLdb
 from scripts import hefu_test
+from function import hefu
 
 # Create your views here.
 def newindex(request,template='newindex.html'):
@@ -65,7 +66,6 @@ def echart_redis(request,template='suyusys/echart_redis.html'):
 		'hefu_count': hefu_count
 	}
 	return render(request,template,context)
-	
 def Api_echart_redis(request,template='apichartredis.html'):
 	ip = request.GET['echart']
 	print ip
@@ -119,14 +119,14 @@ def hefu_game(request,template='suyusys/hefu_game_plan.html'):
 				status = hefu_datas[7]
 				combine_time = hefu_datas[8]
 				print hefuid,game,platform,area,serverid,serverids,apply_time,status,combine_time
-			cursor_hefu.execute('select ip from game_servers where server=%s',serverid)
-			server_ip = cursor_hefu.fetchall()
-			for main_server_ip in server_ip:
-				main_server_ip = main_server_ip[0]
-				print u"主服IP：",main_server_ip[:-5]
-				main_server_ip = main_server_ip[:-5]
-			hefu_info.append(hefuinfo(hefuid=hefuid,game=game,platform=platform,area=area,server_id=serverid,server_ids=serverids,apply_time=apply_time,status=status,combine_time=combine_time,main_server_ip=main_server_ip))
-			hefuinfo.objects.bulk_create(hefu_info)
+				cursor_hefu.execute('select ip from game_servers where server=%s',serverid)
+				server_ip = cursor_hefu.fetchall()
+				for main_server_ip in server_ip:
+					main_server_ip = main_server_ip[0]
+					print u"主服IP：",main_server_ip[:-5]
+					main_server_ip = main_server_ip[:-5]
+				hefu_info.append(hefuinfo(hefuid=hefuid,game=game,platform=platform,area=area,server_id=serverid,server_ids=serverids,apply_time=apply_time,status=status,combine_time=combine_time,main_server_ip=main_server_ip))
+				hefuinfo.objects.bulk_create(hefu_info)
 		cursor_hefu.close()
 	else:
 		print u"合服数据库没有更新"
@@ -201,7 +201,19 @@ def hefu_log_api(request): # 发送合服详细日志的
 	if request.method == 'POST' :
 		req = json.loads(request.body)
 		hostdata = list()
-		print req
+		for id in req.values() :
+			b = {}
+			print id
+			a = hefu(id)
+			ip = a.hefu_id_info(24)
+			print ip
+			'''远程获取合服log'''
+			'''此处省略一百行......'''
+			
+			file = open('F:\django_test\media\hefu_log_20171215-16.txt','r')
+			b = file.read()
+			file.close()
+			return HttpResponse(json.dumps(b))
 @csrf_exempt
 def HefuProgressSearch(request):
 	if request.method == 'POST': # 发送合服进度给web
