@@ -77,6 +77,8 @@ def Api_echart_redis(request,template='apichartredis.html'):
 	print line_dict
 	return JsonResponse(line_dict)
 def globa_setting(request,template='suyusys/globa_setting.html'):
+	'''先读取存储的状态'''
+	'''再存储输入的状态'''
 	return render(request,template)
 def Notifications(request,template='suyusys/Notifications.html'):
 	pass
@@ -228,4 +230,10 @@ def HefuProgressSearch(request):
 		return HttpResponse(json.dumps(hefu_list))
 		
 def file_upload(request,template='suyusys/File_upload.html'):
+	return render(request,template)
+def file_preview(request,template='suyusys/file_preview.html'):
+	return render(request,template)
+
+def server_list(request,template='suyusys/server_list.html'):
+	
 	return render(request,template)

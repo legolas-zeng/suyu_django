@@ -44,12 +44,21 @@ urlpatterns = [
  # about sususys
  url(r'^globa_setting', sviews.globa_setting),
  url(r'^Notifications', sviews.Notifications),
- url(r'^hefu_game_plan\.jsp', sviews.hefu_game, name='hefu_game_plan'),
  url(r'^File_upload', sviews.file_upload),
+ url(r'^file_preview', sviews.file_preview,name='file_preview'),
+ 
+ # about hefu
  url(r'^HefuInput', sviews.HefuInput),
  url(r'^HefuProgress', sviews.HefuProgress),
  url(r'^Hefu_Progress_Api', sviews.HefuProgressApi),
  url(r'^Hefu_Progress_Search', sviews.HefuProgressSearch,name='HefuProgressSearch'),
  url(r'^hefu_log_api', sviews.hefu_log_api,name='hefu_log_api'),
+ url(r'^hefu_game_plan\.jsp', sviews.hefu_game, name='hefu_game_plan'),
+ 
+ # about server_list
+ url(r'^server_list\.php', sviews.server_list, name='server_list'),
+ 
+ 
+ 
 ]
 urlpatterns += staticfiles_urlpatterns()
