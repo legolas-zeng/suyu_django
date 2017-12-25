@@ -53,17 +53,17 @@
                             <li><a href="form_basic.html">Basic form</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">Other Pages</span><span class="fa arrow"></span></a>
+                    <li class="{% block nav_server_list %}{% endblock %}">
+                        <a><i class="fa fa-files-o"></i> <span class="nav-label">区服列表</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
-                            <li><a href="search_results.html">Search results</a></li>
+                            <li class="{% block nav_server_list_golden %}{% endblock %}"><a href="{% url 'server_list' %}">手游金色</a></li>
                         </ul>
                     </li>
                     <li>
                         <a href="grid_options.html"><i class="fa fa-laptop"></i> <span class="nav-label">Grid options</span></a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-table"></i> <span class="nav-label">新服计划</span><span class="label label-info pull-right"></span><span class="fa arrow"></span></a>
+                        <a><i class="fa fa-table"></i> <span class="nav-label">新服计划</span><span class="label label-info pull-right"></span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li><a href="#">新服查询</a></li>
                             <li><a href="#">新服进度</a></li>
@@ -103,7 +103,8 @@
                             <li class="{% block nav_file_upload %}{% endblock %}">
                                 <a href="File_upload">文件上传</a>
                             </li>
-                            <li><a href="#">文件列表</a>
+                            <li class="{% block nav_file_preview %}{% endblock %}">
+                                <a href="{% url 'file_preview' %}">文件列表</a>
                             </li>
                             <li><a href="#">设置</a>
                             </li>
@@ -217,6 +218,10 @@
     <!-- Toastr -->
     <script src="/static/js/saltstack/plugins/toastr/toastr.min.js"></script>
 {% block js %}
+
+{% endblock %}
+
+{% block style %}
 
 {% endblock %}
 
