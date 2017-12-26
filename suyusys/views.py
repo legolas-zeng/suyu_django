@@ -16,7 +16,7 @@ from suyu.models import redisinfo
 import json,sys,urllib
 import datetime
 import os
-from scripts.constant import DB_INFO
+from scripts.constant import DB_INFO,GM_MODULE
 import MySQLdb
 from scripts import hefu_test
 from function import hefu
@@ -97,7 +97,6 @@ def hefu_game(request,template='suyusys/hefu_game_plan.html'):
 	'''now_id  数据库合服ID最大值
 	   now_ids sqlite数据库合服ID最大值'''
 	# now_id_exit=hefuinfo.objects.filter(hefuid=now_id)
-	
 	now_id_ob = hefuinfo.objects.order_by("-hefuid")[0:1].get() # 逆向排序取最大ID
 	now_ids = int(now_id_ob.hefuid)
 	print u"本地数据库最大ID：", now_ids
@@ -135,18 +134,20 @@ def hefu_game(request,template='suyusys/hefu_game_plan.html'):
 	status_id = hefuinfo.objects.filter(status=1).values('hefuid')
 	for status_ids in status_id:
 		for id in status_ids.values():
-			print id
 			cursor_now.execute('select status from server_combine where id=%s',id)
 			status = cursor_now.fetchall()
 			for statuss in status:
 				for sta in statuss:
-					hefuinfo.objects.filter(hefuid=id).update(status=sta) # 后台提交，更改数据库status状态
+					if sta != 1:
+						hefuinfo.objects.filter(hefuid=id).update(status=sta) # 后台提交，更改数据库status状态
 	cursor_now.close()
 	db.close()
 	hefu_data = hefuinfo.objects.filter(status=1)                         # 只返回status=1的订单
+	modules = GM_MODULE
 	context = {
 		'hefu_datas':hefu_data,
-		'hefu_count': hefu_count
+		'hefu_count': hefu_count,
+		'modules': modules
 	}
 	return render(request,template,context)
 @csrf_exempt
@@ -237,3 +238,14 @@ def file_preview(request,template='suyusys/file_preview.html'):
 def server_list(request,template='suyusys/server_list.html'):
 	
 	return render(request,template)
+@csrf_exempt
+def game_action(request):
+	if request.method == 'POST':
+		info_list = json.loads(request.body)
+		print info_list
+		game = info_list.get('stop_id')
+		action = info_list.get('action')
+		'''获取到游戏id，和country，action
+			调用GM接口'''
+		
+		return HttpResponse(json.dumps(1))
