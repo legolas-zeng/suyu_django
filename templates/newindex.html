@@ -70,7 +70,7 @@
                         </ul>
                     </li>
                     <li class="{% block nav_hefu_plan %}{% endblock %}">
-                        <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">合服计划</span><span class="label label-info pull-left">{% if hefu_count > 0 %}{{ hefu_count }}{% endif %}</span><span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-shopping-cart"></i> <span class="nav-label">合服计划</span>{% if hefu_count > 0 %}<span class="label label-info pull-right">{{ hefu_count }}</span>{% else %}<span class="fa arrow"></span>{% endif %}</a>
                         <ul class="nav nav-second-level collapse">
                             <li class="{% block nav_hefu_search %}{% endblock %}"><a href="{% url 'hefu_game_plan' %}">合服查询<span class="label label-info pull-right">{% if hefu_count > 0 %}{{ hefu_count }}{% endif %}</span></a></li>
                             <li class="{% block nav_hefu_Progress %}{% endblock %}"><a href="HefuProgress">合服进度</a></li>
