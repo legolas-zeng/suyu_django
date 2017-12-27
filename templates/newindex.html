@@ -10,7 +10,8 @@
     <link href="/static/js/saltstack/plugins/gritter/jquery.gritter.css" rel="stylesheet">
     <link href="/static/css/saltstack/animate.css" rel="stylesheet">
     <link href="/static/css/saltstack/style.css" rel="stylesheet">
-{#    <script src="/static/js/saltstack/jquery-3.1.1.min.js"></script>#}
+
+
     {% block head %}{% endblock %}
 
 </head>
@@ -56,7 +57,7 @@
                     <li class="{% block nav_server_list %}{% endblock %}">
                         <a><i class="fa fa-files-o"></i> <span class="nav-label">区服列表</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
-                            <li class="{% block nav_server_list_golden %}{% endblock %}"><a href="{% url 'server_list' %}">手游金色</a></li>
+                            <li class="{% block nav_server_list_golden %}{% endblock %}"><a href="{% url 'server_list' %}">手游6k</a></li>
                         </ul>
                     </li>
                     <li>
@@ -122,7 +123,7 @@
         <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
             <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-            <form role="search" class="navbar-form-custom" action="search_results.html">
+            <form role="search" class="navbar-form-custom" action="#">
                 <div class="form-group">
                     <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
                 </div>
@@ -151,6 +152,8 @@
             </ul>
         </nav>
         </div>
+
+
         <div class="row  border-bottom white-bg dashboard-header">
             {% block content %}
 
@@ -217,6 +220,8 @@
     <script src="/static/js/saltstack/demo/sparkline-demo.js"></script>
     <!-- Toastr -->
     <script src="/static/js/saltstack/plugins/toastr/toastr.min.js"></script>
+
+
 {% block js %}
 
 {% endblock %}
