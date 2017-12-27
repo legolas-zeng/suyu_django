@@ -19,7 +19,7 @@ import os
 from scripts.constant import DB_INFO,GM_MODULE
 import MySQLdb
 from scripts import hefu_test
-from function import hefu
+from function import hefu,game_list
 
 # Create your views here.
 def newindex(request,template='newindex.html'):
@@ -229,15 +229,48 @@ def HefuProgressSearch(request):
 		#print data
 		#return HttpResponse(hefu_list)
 		return HttpResponse(json.dumps(hefu_list))
+@csrf_exempt
+def HefuServerPlanView(request,template='suyusys/hefu_game_plan.html'):
+	state = request.GET.get('status')
+	print state
 		
 def file_upload(request,template='suyusys/File_upload.html'):
 	return render(request,template)
 def file_preview(request,template='suyusys/file_preview.html'):
 	return render(request,template)
 
+def updata_game_api():
+	a = game_list('tmld_6k')
+	req = a.game_info()
+	for datas in req:
+		game_infos = list()
+		game = datas[1]
+		app = datas[2]
+		app_id = datas[3]
+		platform = datas[4]
+		servers = datas[6]
+		show = datas[8]
+		merge = datas[9]
+		name = datas[14]
+		status = datas[19]
+		offtime = datas[20]
+		pretip = datas[21]
+		sertime = datas[22]
+		ip = datas[24][:-5]
+		white = datas[26]
+		is_open = datas[27]
+		add_time = datas[28]
+		game_infos.append(server(game=game,app=app,app_id=app_id,platform=platform,server=servers,show=show,merge=merge,name=name,status=status,offtime=offtime,sertime=sertime,ip=ip,white=white,is_open=is_open,add_time=add_time))
+		server.objects.bulk_create(game_infos)
+	print u"游戏更新完成"
 def server_list(request,template='suyusys/server_list.html'):
-	
-	return render(request,template)
+	gamelist = server.objects.all()
+	hefu_count = ret_info()
+	context = {
+		'hefu_count': hefu_count,
+		'game_list':gamelist
+	}
+	return render(request,template,context)
 @csrf_exempt
 def game_action(request):
 	if request.method == 'POST':
