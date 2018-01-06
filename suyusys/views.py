@@ -13,13 +13,12 @@ from django import forms
 from suyu.models import *
 from suyusys.models import *
 from suyu.models import redisinfo
-import json,sys,urllib
-import datetime
-import os
-from scripts.constant import DB_INFO,GM_MODULE
-import MySQLdb
+import json,sys,urllib,os,MySQLdb,datetime
+from scripts.constant import DB_INFO,GM_MODULE,COUNTYR
 from scripts import hefu_test
-from function import hefu,game_list
+from function import *
+from search import action
+
 
 # Create your views here.
 def newindex(request,template='newindex.html'):
@@ -38,6 +37,8 @@ def newindex(request,template='newindex.html'):
 	}
 	print context
 	return render(request,template,context)
+def reindex(request,template='suyusys/reindex.html'):
+	return render(request,template)
 def ret_info():
 	db_key = 'china_gmdb'
 	db_info = DB_INFO.get(db_key)
@@ -156,6 +157,7 @@ def HefuInput(request,template='suyusys/HefuInput.html'): # 提交开始合服
 		hefu_list = json.loads(request.body)
 		ip = hefu_list.get('ip')
 		id = hefu_list.get('hefuid')
+		print ip,id
 		dic = {}
 		for ids in id:
 			hefuinfo.objects.filter(hefuid=ids).update(success=1) # 订单状态改为正在合服
@@ -176,19 +178,32 @@ def HefuInput(request,template='suyusys/HefuInput.html'): # 提交开始合服
 				print hefu_id,hefu_ids
 			'''提取区服号，调用salt模块执行'''
 @csrf_exempt
-def HefuProgressApi(request):  # 接收合服脚本返回的合服进度
+def HefuProgressApi(request):  # 接收合服脚本返回的合服进度，修改本地数据库区服信息
     if request.method=='POST':
         req=json.loads(request.body)
         hostdata=list()
         print req
         pro = req.get('pro')
         proed = str(pro * 25)
-        print proed
         hefu_id = req.get('hefu_id')
         print hefu_id
         T = hefuinfo.objects.get(hefuid=hefu_id)
         T.progress = proed
         T.save()
+        if pro == 4:
+	        a = hefu(hefu_id)
+	        server_id = a.hefu_info(4) # 主服id
+	        server_ids = a.hefu_info(5)# 合并服id
+	        game = a.hefu_info(1)
+	        print server_id, len(server_ids),game
+	        if len(server_ids) <= 4:
+		        # server.objects.filter(game=game,server_ids=str(server_ids)).update(merge=server_id)
+	            server.objects.filter(Q(game=game)|Q(server=server_ids)).update(merge=server_id)
+	        else:
+		        merge_server_ids = server_ids.split(',')
+		        for id in merge_server_ids:
+			        print id
+			        server.objects.filter(Q(game=game) | Q(server=id)).update(merge=server_id)
     return HttpResponse('1')
 @csrf_exempt
 def HefuProgress(request,template='suyusys/HefuProgress.html'):
@@ -233,37 +248,13 @@ def HefuProgressSearch(request):
 def HefuServerPlanView(request,template='suyusys/hefu_game_plan.html'):
 	state = request.GET.get('status')
 	print state
-		
 def file_upload(request,template='suyusys/File_upload.html'):
 	return render(request,template)
 def file_preview(request,template='suyusys/file_preview.html'):
 	return render(request,template)
 
-def updata_game_api():
-	a = game_list('tmld_6k')
-	req = a.game_info()
-	for datas in req:
-		game_infos = list()
-		game = datas[1]
-		app = datas[2]
-		app_id = datas[3]
-		platform = datas[4]
-		servers = datas[6]
-		show = datas[8]
-		merge = datas[9]
-		name = datas[14]
-		status = datas[19]
-		offtime = datas[20]
-		pretip = datas[21]
-		sertime = datas[22]
-		ip = datas[24][:-5]
-		white = datas[26]
-		is_open = datas[27]
-		add_time = datas[28]
-		game_infos.append(server(game=game,app=app,app_id=app_id,platform=platform,server=servers,show=show,merge=merge,name=name,status=status,offtime=offtime,sertime=sertime,ip=ip,white=white,is_open=is_open,add_time=add_time))
-		server.objects.bulk_create(game_infos)
-	print u"游戏更新完成"
 def server_list(request,template='suyusys/server_list.html'):
+	
 	gamelist = server.objects.all()
 	hefu_count = ret_info()
 	context = {
@@ -282,3 +273,54 @@ def game_action(request):
 			调用GM接口'''
 		
 		return HttpResponse(json.dumps(1))
+def action_search(request,key_word):
+	print 'jaosn'
+	print key_word
+	a = action.function_search(key_word)
+	context = {
+		'result':111,
+	}
+	return render(request,'suyusys/action_search.html',context)
+
+def Host_list(request,template='suyusys/Host_list.html'):
+	req = request.GET.get('country','all')
+	print req
+	if req == 'all':
+		result = Hosts.objects.all()
+	else:
+		result = Hosts.objects.filter(country=req)
+	context = {
+		'host_list':result,
+		'country':COUNTYR,
+		'req':req
+	}
+	return render(request,template,context)
+@csrf_exempt
+def alter_host_status_api(request):
+	if request.method == 'POST':
+		try:
+			req = json.loads(request.body)
+			print req
+			action = req.get('action')
+			id = req.get('id')
+			print action,id,len(id)
+			if len(id) < 5:
+				if action == 'on':
+					Hosts.objects.filter(id = id).update(hostexit=0)
+				else:
+					Hosts.objects.filter(id=id).update(hostexit=1)
+			else:
+				if action == 'off':
+					Hosts.objects.filter(id=id).update(hostuse=0)
+				else:
+					Hosts.objects.filter(id=id).update(hostuse=1)
+			context = {
+				'msg': '状态更改成功',
+				'status': 1
+			}
+		except:
+			context = {
+				'msg': '状态更改失败',
+				'status': 0
+			}
+		return JsonResponse(context)
