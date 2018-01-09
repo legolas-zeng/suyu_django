@@ -1,9 +1,12 @@
 from django.conf.urls import include, url
 from . import views,function
 from suyusys import views as sviews
+from NewGames import views as ssviews
+from search import views as sv
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import staticfiles
 from saltstack.views import *
+
 # import silver_fox
 # from silver_fox import views as sviews
 urlpatterns = [
@@ -36,16 +39,24 @@ urlpatterns = [
  
  # about redis
  url(r'^redisreport',views.redisreport, name='redisreport'),
- url(r'^newindex',sviews.newindex),
  url(r'^redis-info',sviews.redis_info, name='redis-info'),
  url(r'^echart_redis/$',sviews.echart_redis),
  url(r'^api/apichartredis/$',sviews.Api_echart_redis),
  
- # about sususys
+ # about suyusys
+ url(r'^newindex',sviews.newindex),
+ url(r'^reindex',sviews.reindex,name='reindex'),
  url(r'^globa_setting', sviews.globa_setting),
  url(r'^Notifications', sviews.Notifications),
  url(r'^File_upload', sviews.file_upload),
  url(r'^file_preview', sviews.file_preview,name='file_preview'),
+ url(r'^ip_search$', sv.ip_search, name='ip_search'),
+ #url(r'^action_search/(\d+)',include('suyusys.urls',namespace='suyusys')),
+ url(r'^action_search',include('suyusys.urls')),
+ #url(r'^action_search/(?P<key_word>\S+)', sv.action_search, name='action_search'),
+ url(r'^Host_list', sviews.Host_list, name='Host_list'),
+ url(r'^alter_host_status_api', sviews.alter_host_status_api, name='alter_host_status_api'),
+ url(r'Host_info',sviews.Host_info,name='Host_info'),
  
  # about hefu
  url(r'^HefuInput', sviews.HefuInput),
@@ -54,9 +65,19 @@ urlpatterns = [
  url(r'^Hefu_Progress_Search', sviews.HefuProgressSearch,name='HefuProgressSearch'),
  url(r'^hefu_log_api', sviews.hefu_log_api,name='hefu_log_api'),
  url(r'^hefu_game_plan\.jsp', sviews.hefu_game, name='hefu_game_plan'),
+ url(r'^HefuServerPlanView', sviews.HefuServerPlanView, name='HefuServerPlanView'),
  
  # about server_list
- url(r'^server_list\.php', sviews.server_list, name='server_list'),
+ url(r'^server_list', sviews.server_list, name='server_list'),
+ 
+
+ # about game
+ url(r'^game_action', sviews.game_action, name='game_action'),
+ 
+ # about install
+ url(r'^new_game_plan', ssviews.newgameplan, name='new_game_plan'),
+ url(r'^new_game_progress', ssviews.new_game_progress, name='new_game_progress'),
+ url(r'^new_game_api', ssviews.new_game_api, name='new_game_api'),
  
  
  
