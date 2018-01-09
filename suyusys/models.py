@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
+from NewGames.models import *
 
 # Create your models here.
 class DbServersRedis(models.Model):
@@ -54,6 +55,7 @@ class hefuinfo(models.Model):
 		verbose_name_plural = u'合服详情'
 class server(models.Model):
 	platform = models.CharField(max_length=255, verbose_name=u"平台")
+	area = models.CharField(max_length=16,verbose_name=u"游戏编号",default=0)
 	app = models.CharField(max_length=16,verbose_name=u"中心服")
 	app_id = models.CharField(max_length=255,verbose_name=u"游戏类")
 	server = models.CharField(max_length=255,verbose_name=u"唯一ID")
@@ -63,14 +65,11 @@ class server(models.Model):
 	show = models.CharField(max_length=16,verbose_name=u"显示号")
 	status = models.CharField(max_length=16)
 	offtime = models.DateTimeField(max_length=255,verbose_name=u"停服时间")
-	pretip = models.DateTimeField(max_length=255,verbose_name=u"配置时间")
 	sertime = models.DateTimeField(max_length=255,verbose_name=u"开服时间")
 	ip = models.GenericIPAddressField(max_length=255,verbose_name=u"IP")
 	white = models.CharField(max_length=16,verbose_name=u"白名单")
 	is_open = models.BooleanField(max_length=2,verbose_name=u"是否开服")
 	add_time = models.CharField(max_length=255,verbose_name=u"申请时间")
-	main_server_ip = models.GenericIPAddressField(max_length=255, default='0.0.0.0')
-
-class Meta:
-	verbose_name = u'游戏列表'
-	verbose_name_plural = u'游戏详情'
+	class Meta:
+		verbose_name = u'游戏列表'
+		verbose_name_plural = u'游戏详情'
