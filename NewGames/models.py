@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
+import os,django
+#os.environ.update({"DJANGO_SETTINGS_MODULE": "django_test.settings"})
+#os.environ.setdefault("DJANGO_SETTINGS_MODULE","django_test.settings")
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'django_test.settings'
+
 
 # Create your models here.
 class new_game_plan(models.Model):
-	ids = models.CharField(max_length=255,verbose_name=u"新服订单号",unique=True)
+	ids = models.CharField(max_length=255,verbose_name=u"新服订单号")
 	platform = models.CharField(max_length=255, verbose_name=u"平台")
 	name = models.CharField(max_length=255, verbose_name=u"区服名称")
 	game = models.CharField(max_length=255)
@@ -52,12 +57,23 @@ class Hosts(models.Model):
 	hostLanIp = models.GenericIPAddressField(verbose_name=u"内网IP", blank=True, null=True)
 	hostDomain = models.CharField(verbose_name=u'主机域名', max_length=300, blank=True, help_text=u"主机域名为空则会读取IP")
 	hostLimit = models.IntegerField(verbose_name=u"主机最大区服数", default=5)
+	hostAlready = models.IntegerField(verbose_name=u"主机已安装区服数",default=0)
 	hostAddTime = models.DateTimeField(verbose_name=u"主机添加时间", auto_now_add=True)
+	hostexit = models.BooleanField(verbose_name=u"主机是否退还",default=0)
+	hostuse = models.BooleanField(verbose_name=u"主机是否可用",default=0)
 	
-	
+
 	def __unicode__(self):
 		return u"%s_%s %s" % (self.country, self.app, self.hostWanIp)
 	
 	class Meta:
 		verbose_name = u'主机'
 		verbose_name_plural = u'主机列表'
+class platform_map(models.Model):
+	ids = models.CharField(max_length=16,verbose_name=u"ID",unique=True)
+	game = models.CharField(max_length=255,verbose_name=u"游戏")
+	platform = models.CharField(max_length=255,verbose_name=u"平台")
+	class Meta:
+		verbose_name = u'平台'
+		verbose_name_plural = u'平台列表'
+	
