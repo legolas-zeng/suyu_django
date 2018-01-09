@@ -80,6 +80,10 @@ def Api_echart_redis(request,template='apichartredis.html'):
 def globa_setting(request,template='suyusys/globa_setting.html'):
 	'''先读取存储的状态'''
 	'''再存储输入的状态'''
+	req = '111.231.57.31'
+	result = Hosts.objects.filter(hostWanIp__contains=req)
+	for a in result:
+		print a
 	return render(request,template)
 def Notifications(request,template='suyusys/Notifications.html'):
 	pass
@@ -273,27 +277,36 @@ def game_action(request):
 			调用GM接口'''
 		
 		return HttpResponse(json.dumps(1))
-def action_search(request,key_word):
-	print 'jaosn'
-	print key_word
-	a = action.function_search(key_word)
-	context = {
-		'result':111,
-	}
-	return render(request,'suyusys/action_search.html',context)
+
 
 def Host_list(request,template='suyusys/Host_list.html'):
 	req = request.GET.get('country','all')
-	print req
-	if req == 'all':
+	hostexit = request.GET.get('hostexit','all')
+	hostuse = request.GET.get('hostuse','all')
+	
+	if req == 'all' and hostexit =='all' and hostuse == 'all':
 		result = Hosts.objects.all()
-	else:
+	elif req != 'all' and hostexit == 'all' and hostuse == 'all':
 		result = Hosts.objects.filter(country=req)
+	elif req == 'all' and hostexit != 'all' and hostuse == 'all':
+		result = Hosts.objects.filter(hostexit=hostexit)
+	elif req == 'all' and hostexit == 'all' and hostuse != 'all':
+		result = Hosts.objects.filter(hostuse=hostuse)
+	elif req == 'all' and hostexit != 'all' and hostuse != 'all':
+		result = Hosts.objects.filter(Q(hostexit=hostexit) , Q(hostuse=hostuse))
+	elif req != 'all' and hostexit == 'all' and hostuse != 'all':
+		result = Hosts.objects.filter(Q(country=req) , Q(hostuse=hostuse))
+	elif req != 'all' and hostexit != 'all' and hostuse == 'all':
+		result = Hosts.objects.filter(Q(country=req) , Q(hostexit=hostexit))
+		
 	context = {
 		'host_list':result,
 		'country':COUNTYR,
-		'req':req
+		'req':req,
+		'het':hostexit,
+		'hue':hostuse
 	}
+	
 	return render(request,template,context)
 @csrf_exempt
 def alter_host_status_api(request):
@@ -301,26 +314,31 @@ def alter_host_status_api(request):
 		try:
 			req = json.loads(request.body)
 			print req
-			action = req.get('action')
-			id = req.get('id')
-			print action,id,len(id)
-			if len(id) < 5:
-				if action == 'on':
-					Hosts.objects.filter(id = id).update(hostexit=0)
+			if req :
+				action = req.get('action')
+				id = req.get('id')
+				print action,id,len(id)
+				if len(id) < 5:
+					if action == 'on':
+						Hosts.objects.filter(id = id).update(hostexit=0)
+					else:
+						Hosts.objects.filter(id=id).update(hostexit=1)
 				else:
-					Hosts.objects.filter(id=id).update(hostexit=1)
-			else:
-				if action == 'off':
-					Hosts.objects.filter(id=id).update(hostuse=0)
-				else:
-					Hosts.objects.filter(id=id).update(hostuse=1)
-			context = {
-				'msg': '状态更改成功',
-				'status': 1
-			}
+					if action == 'off':
+						Hosts.objects.filter(id=id).update(hostuse=0)
+					else:
+						Hosts.objects.filter(id=id).update(hostuse=1)
+				context = {
+					'msg': '状态更改成功',
+					'status': 1
+				}
 		except:
 			context = {
 				'msg': '状态更改失败',
 				'status': 0
 			}
 		return JsonResponse(context)
+def Host_info(request,template='suyusys/Host_info.html'):
+	ip = request.GET['ip']
+	print ip
+	return render(request,template)
