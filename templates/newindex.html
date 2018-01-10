@@ -46,12 +46,14 @@
                         <a href="metrics.html"><i class="fa fa-pie-chart"></i> <span class="nav-label">Metrics</span>  </a>
                     </li>
                     <li>
-                        <a href="widgets.html"><i class="fa fa-flask"></i> <span class="nav-label">Widgets</span></a>
+                        <a href="widgets.html"><i class="fa fa-flask"></i> <span class="nav-label">区服分布</span></a>
                     </li>
-                    <li>
-                        <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">Forms</span><span class="fa arrow"></span></a>
+                    <li class="{% block nav_host %}{% endblock %}">
+                        <a href="#"><i class="fa fa-edit"></i> <span class="nav-label">主机管理</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
-                            <li><a href="form_basic.html">Basic form</a></li>
+                            <li class="{% block nav_host_list %}{% endblock %}"><a href="{% url 'Host_list' %}">主机列表</a></li>
+                            <li><a href="form_basic.html">添加主机</a></li>
+                            <li><a href="form_basic.html">系统监控</a></li>
                         </ul>
                     </li>
                     <li class="{% block nav_server_list %}{% endblock %}">
@@ -63,11 +65,11 @@
                     <li>
                         <a href="grid_options.html"><i class="fa fa-laptop"></i> <span class="nav-label">Grid options</span></a>
                     </li>
-                    <li>
+                    <li class="{% block nav_new_game %}{% endblock %}">
                         <a><i class="fa fa-table"></i> <span class="nav-label">新服计划</span><span class="label label-info pull-right"></span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
-                            <li><a href="#">新服查询</a></li>
-                            <li><a href="#">新服进度</a></li>
+                            <li class="{% block nav_new_game_search %}{% endblock %}"><a href="{% url 'new_game_plan' %}">新服查询</a></li>
+                            <li class="{% block nav_new_game_progress %}{% endblock %}"><a href="{% url 'new_game_progress' %}">新服进度</a></li>
                         </ul>
                     </li>
                     <li class="{% block nav_hefu_plan %}{% endblock %}">
@@ -88,7 +90,7 @@
                         <a href="#"><i class="fa fa-sitemap"></i> <span class="nav-label">批量任务</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li>
-                                <a href="">模块安装</a>
+                                <a href="#">执行sql</a>
                             </li>
                             <li class="{% block nav_saltstack %}{% endblock %}">
                                 <a href="saltmodule_deploy.html">软件安装</a>
@@ -115,7 +117,6 @@
                         <a href="globa_setting.html"><i class="fa fa-wrench"></i> <span class="nav-label">全局设置</span></a>
                     </li>
                 </ul>
-
             </div>
         </nav>
         <div id="page-wrapper" class="gray-bg ">
@@ -123,9 +124,9 @@
         <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
             <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
-            <form role="search" class="navbar-form-custom" action="#">
+            <form role="search" class="navbar-form-custom" action="{% url 'ip_search' %}">
                 <div class="form-group">
-                    <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                    <input type="text" placeholder="IP搜索..." class="form-control" name="top-search" id="top-search" >
                 </div>
             </form>
         </div>
@@ -140,8 +141,8 @@
                     {% include "suyusys/Notifications.html" %}
                 </li>
                 <li>
-                    <a href="login.html">
-                        <i class="fa fa-sign-out"></i> Log out
+                    <a href="admin" target="_blank">
+                        <i class="fa fa-sign-out"></i> 后台管理
                     </a>
                 </li>
                 <li>
@@ -164,6 +165,12 @@
 
             {% endblock %}
         </div>
+        <div class="wrapper wrapper-content animated fadeIn">
+            {% block new_content %}
+
+            {% endblock %}
+        </div>
+
         </div>
         <div id="right-sidebar" class="animated">
             <div class="sidebar-container">
@@ -194,31 +201,30 @@
         </div>
     </div>
 
-    <!-- Mainly scripts -->
     <script src="/static/js/saltstack/jquery-3.1.1.min.js"></script>
     <script src="/static/js/saltstack/bootstrap.min.js"></script>
     <script src="/static/js/saltstack/plugins/metisMenu/jquery.metisMenu.js"></script>
     <script src="/static/js/saltstack/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 
-    <!-- Flot -->
+
     <script src="/static/js/saltstack/plugins/flot/jquery.flot.js"></script>
     <script src="/static/js/saltstack/plugins/flot/jquery.flot.tooltip.min.js"></script>
     <script src="/static/js/saltstack/plugins/flot/jquery.flot.resize.js"></script>
-    <!-- Peity -->
+
     <script src="/static/js/saltstack/plugins/peity/jquery.peity.min.js"></script>
     <script src="/static/js/saltstack/demo/peity-demo.js"></script>
-    <!-- Custom and plugin javascript -->
+
     <script src="/static/js/saltstack/inspinia.js"></script>
     <script src="/static/js/saltstack/plugins/pace/pace.min.js"></script>
-    <!-- jQuery UI -->
+
     <script src="/static/js/saltstack/plugins/jquery-ui/jquery-ui.min.js"></script>
-    <!-- GITTER -->
+
     <script src="/static/js/saltstack/plugins/gritter/jquery.gritter.min.js"></script>
-    <!-- Sparkline -->
+
     <script src="/static/js/saltstack/plugins/sparkline/jquery.sparkline.min.js"></script>
-    <!-- Sparkline demo data  -->
+
     <script src="/static/js/saltstack/demo/sparkline-demo.js"></script>
-    <!-- Toastr -->
+
     <script src="/static/js/saltstack/plugins/toastr/toastr.min.js"></script>
 
 
