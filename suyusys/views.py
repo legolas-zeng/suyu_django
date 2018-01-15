@@ -18,9 +18,37 @@ from scripts.constant import DB_INFO,GM_MODULE,COUNTYR
 from scripts import hefu_test
 from function import *
 from search import action
-
+from string import join
+from suyusys import forms
 
 # Create your views here.
+
+@csrf_exempt
+def new_login(request,template='suyusys/new_login.html'):
+	msg = ''
+	next = request.GET.get('next', '')
+	if request.method == 'POST':
+		username = request.POST['user']
+		password = request.POST['passwd']
+		print username,password
+		if user is not None:
+			if user.is_active:
+				login(request, user)
+				request.session['country_list'] = COUNTRY_LIST
+				request.session['select_country'] = 'china'
+				request.session['select_country_info'] = COUNTRY_LIST.get('china')
+				if next:
+					return HttpResponseRedirect(next)
+				return HttpResponseRedirect(reverse('index'))
+			else:
+				msg = u"用户已禁用"
+		else:
+			msg = u'用户名或者密码错误'
+	context = {
+		'msg': msg,
+		'next': next,
+	}
+	return render(request,template,context)
 def newindex(request,template='newindex.html'):
 	db_key = 'china_gmdb'
 	db_info = DB_INFO.get(db_key)
@@ -81,9 +109,14 @@ def globa_setting(request,template='suyusys/globa_setting.html'):
 	'''先读取存储的状态'''
 	'''再存储输入的状态'''
 	req = '111.231.57.31'
-	result = Hosts.objects.filter(hostWanIp__contains=req)
+	result = server.objects.filter(ip=req)
+	ip = list()
 	for a in result:
-		print a
+		print a.server
+		ip.append(a.server)
+	print ip
+	b =','.join(ip)
+	print b
 	return render(request,template)
 def Notifications(request,template='suyusys/Notifications.html'):
 	pass
@@ -342,3 +375,9 @@ def Host_info(request,template='suyusys/Host_info.html'):
 	ip = request.GET['ip']
 	print ip
 	return render(request,template)
+@csrf_exempt
+def salt_tem_api(request):
+	if request.method == 'POST':
+		req = json.loads(request.body)
+		print req
+	return HttpResponse('1')
