@@ -31,11 +31,12 @@ urlpatterns = [
  url(r'^upload\_list$', views.upload_list, name='upload_list'),
  url(r'^upload\_del$', views.upload_del, name='upload_del'),
  
- # about run command urls
+ # about salt
  url(r'^command\_page$',command_page, name='command_page'),
  url(r'^command\_run$',command_run, name='command_run'),
  url(r'^saltmodule_deploy\.html',saltmodule),
- url(r'minion/softinstall/',SoftInstall,name='SoftInstall'),
+ url(r'^minion/softinstall/',SoftInstall,name='SoftInstall'),
+ url(r'^salt_tem_api$',sviews.salt_tem_api,name='salt_tem_api'),
  
  # about redis
  url(r'^redisreport',views.redisreport, name='redisreport'),
@@ -57,6 +58,7 @@ urlpatterns = [
  url(r'^Host_list', sviews.Host_list, name='Host_list'),
  url(r'^alter_host_status_api', sviews.alter_host_status_api, name='alter_host_status_api'),
  url(r'Host_info',sviews.Host_info,name='Host_info'),
+ url(r'^new_login$', sviews.new_login, name='new_login'),
  
  # about hefu
  url(r'^HefuInput', sviews.HefuInput),
