@@ -31,15 +31,14 @@ def new_login(request,template='suyusys/new_login.html'):
 		username = request.POST['user']
 		password = request.POST['passwd']
 		print username,password
+		next = request.POST['next']
+		user = authenticate(username=username, password=password)
 		if user is not None:
 			if user.is_active:
 				login(request, user)
-				request.session['country_list'] = COUNTRY_LIST
-				request.session['select_country'] = 'china'
-				request.session['select_country_info'] = COUNTRY_LIST.get('china')
 				if next:
 					return HttpResponseRedirect(next)
-				return HttpResponseRedirect(reverse('index'))
+				return HttpResponseRedirect(reverse('newindex'))
 			else:
 				msg = u"用户已禁用"
 		else:
@@ -49,6 +48,14 @@ def new_login(request,template='suyusys/new_login.html'):
 		'next': next,
 	}
 	return render(request,template,context)
+@login_required
+def login_out(request):
+	logout(request)
+	return HttpResponseRedirect(reverse('new_login'))
+@login_required
+def alter_passwd(request,template='suyusys/alter_passwd.html'):
+	pass
+@login_required
 def newindex(request,template='newindex.html'):
 	db_key = 'china_gmdb'
 	db_info = DB_INFO.get(db_key)
@@ -59,11 +66,11 @@ def newindex(request,template='newindex.html'):
 	datas = cursor.fetchall()
 	for a in datas:
 		for hefu_count in a:
-			print hefu_count
+			hefu_count = hefu_count
 	context = {
-		'hefu_count':hefu_count
+		'hefu_count':hefu_count,
+		'user': request.user
 	}
-	print context
 	return render(request,template,context)
 def reindex(request,template='suyusys/reindex.html'):
 	return render(request,template)
@@ -108,15 +115,6 @@ def Api_echart_redis(request,template='apichartredis.html'):
 def globa_setting(request,template='suyusys/globa_setting.html'):
 	'''先读取存储的状态'''
 	'''再存储输入的状态'''
-	req = '111.231.57.31'
-	result = server.objects.filter(ip=req)
-	ip = list()
-	for a in result:
-		print a.server
-		ip.append(a.server)
-	print ip
-	b =','.join(ip)
-	print b
 	return render(request,template)
 def Notifications(request,template='suyusys/Notifications.html'):
 	pass
