@@ -45,7 +45,7 @@ urlpatterns = [
  url(r'^api/apichartredis/$',sviews.Api_echart_redis),
  
  # about suyusys
- url(r'^newindex',sviews.newindex),
+ url(r'^newindex',sviews.newindex,name='newindex'),
  url(r'^reindex',sviews.reindex,name='reindex'),
  url(r'^globa_setting', sviews.globa_setting),
  url(r'^Notifications', sviews.Notifications),
@@ -59,6 +59,7 @@ urlpatterns = [
  url(r'^alter_host_status_api', sviews.alter_host_status_api, name='alter_host_status_api'),
  url(r'Host_info',sviews.Host_info,name='Host_info'),
  url(r'^new_login$', sviews.new_login, name='new_login'),
+ url(r'^login_out', sviews.login_out, name='login_out'),
  
  # about hefu
  url(r'^HefuInput', sviews.HefuInput),
