@@ -54,7 +54,6 @@ def command_run(request,template='command_run.html'):
 			results = test(hostip,modelname)
 			return HttpResponse(json.dumps(results))
 
-
 def saltmodule(request,template='saltstack/saltmodule_deploy.html'):
 	usersession = request.session.get('user_id')
 	user_name = request.session.get('user_name')
@@ -157,8 +156,8 @@ def SoftInstall(request):
         #savelog = CmdRunLog.objects.create(user=user_name, target=minions_list, cmd=cmd, total=len(minions_list.split(',')))
         ret={'jid':jid,'minion':minions_list,'savelogid':1}
         return  HttpResponse(json.dumps(ret))
-				
-				
+    
+
 				
 			
 		

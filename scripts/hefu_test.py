@@ -42,7 +42,7 @@ def run_hefu():
     save_hefu_log(u"执行合服脚本成功")
     # save_hefu_log(u"执行合服脚本失败")
 def post_info(pro,status):
-    hefu_id = '539' #
+    hefu_id = '544'
     info = {
         'pro':pro,
         'status':status,

@@ -4,10 +4,16 @@ from django.test import TestCase
 
 # Create your tests here.
 
-from function import gameinfo
+import re
 
-a = gameinfo()
-c = 543
-print type(c)
-b = a.select(543)
-print b
+s = '1079,1084,1089'
+p = re.compile(r'\d,\d')
+
+while 1:
+	m = p.search(s)
+	if m:
+		mm = m.group()
+		s = s.replace(mm, mm.replace(',', ''))
+	else:
+		break
+print s

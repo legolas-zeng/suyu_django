@@ -16,7 +16,7 @@ from suyusys.models import *
 from scripts.constant import *
 import re
 from suyusys import views
-
+from search import action
 
 # Create your views here.
 
@@ -24,5 +24,10 @@ def ip_search(request):
 	if request.method=='GET':
 		key_word = request.GET['top-search']
 		print key_word
-		return HttpResponseRedirect(reverse('action_search',kwargs={"key_word":123}))
+		#return HttpResponseRedirect(reverse('action_search',kwargs={"key_word":key_word}))
 		#return HttpResponseRedirect(reverse('suyusys:action_search',args=(key_word,)))
+		return HttpResponseRedirect(reverse(views.action.action_search, args=[key_word,]))
+
+#def action_search(request,key_word):
+
+

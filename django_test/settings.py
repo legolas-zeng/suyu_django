@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'suyu',
     'saltstack',
-    'suyusys'
+    'suyusys',
+    'NewGames',
+    'djcelery',
+    'search',
     #'silver_fox',
     #'suyu.templatetags',
 ]
@@ -128,6 +131,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'zh-Hans'
+DEFAULT_CHARSET = 'utf-8'
 
 TIME_ZONE = 'Asia/Shanghai'
 
