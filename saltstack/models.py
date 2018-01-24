@@ -3,6 +3,35 @@ from __future__ import unicode_literals
 from django.db import models
 
 # Create your models here.
+class ZoneModules(models.Model):
+    argv_count = (
+        (0, '0'),
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+    )
+    moduleCnName = models.CharField(verbose_name=u"区服模块中文名称", max_length=100)
+    moduleName = models.CharField(verbose_name=u"区服模块名", max_length=100)
+    #moduleIsargv = models.BooleanField(default=False, verbose_name="是否接收自定义参数", help_text=u"接收自定义参数会读取前端参数，后台配置的默认参数会失效")
+    moduleIsUseId = models.BooleanField(default=True, verbose_name="是否接收serverId")
+    moduleArgvCount = models.IntegerField(verbose_name=u"自定义参数个数", choices=argv_count, default=0, help_text=u"0表示不接收自定义参数，但会读取后台默认参数")
+    moduleArgv1 = models.CharField(verbose_name=u"参数1", max_length=200, blank=True)
+    moduleArgv2 = models.CharField(verbose_name=u"参数2", max_length=100, blank=True)
+    moduleArgv3 = models.CharField(verbose_name=u"参数3", max_length=100, blank=True)
+
+    def get_show_name(self):
+        if self.moduleArgvCount == 0:
+            return "%s[%s] (%s %s %s)" % (self.moduleCnName, self.moduleName, self.moduleArgv1, self.moduleArgv2, self.moduleArgv3)
+        else:
+            return "%s[%s]" % (self.moduleCnName, self.moduleName)
+
+    def __unicode__(self):
+        return "%s(%s)" %(self.moduleCnName, self.moduleName)
+
+    class Meta:
+        verbose_name = u'区服模块'
+        verbose_name_plural = u'区服模块列表（ZoneModules）'
+
 class saltserver(models.Model):
     Role = (
     ('Master', 'Master'),
@@ -32,7 +61,6 @@ class Modules(models.Model):
     class Meta:
         verbose_name = u'Salt软件'
         verbose_name_plural = u'Salt软件'
-        
 class Minions(models.Model):
     Status = (
     ('Accepted', 'Accepted'),
@@ -67,8 +95,6 @@ class MinionGroup(models.Model):
     class Meta:
         verbose_name = u'Minion组'
         verbose_name_plural = u'Minion组'
-
-
 class CmdRunLog(models.Model):
     user=models.CharField(max_length=30)
     time=models.DateTimeField(auto_now_add=True,null=True)
@@ -82,8 +108,6 @@ class CmdRunLog(models.Model):
     class Meta:
         verbose_name = u'命令执行日志'
         verbose_name_plural = u'命令执行日志'
-
-
 class SaltJobs(models.Model):
     jid = models.CharField(max_length=50,unique=True)
     args = models.CharField(max_length=50,null=True,blank=True)
@@ -114,4 +138,6 @@ class ModuleDeployLog(models.Model):
     class Meta:
         verbose_name = u'软件部署'
         verbose_name_plural = u'软件部署'
+        
+
     
