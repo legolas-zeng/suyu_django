@@ -7,15 +7,27 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.template import RequestContext, Context
 from django.core.urlresolvers import reverse
-from suyu.models import Host,IDC,autohost,uploadfile,runmodel
+from suyu.models import *
 from saltstack.models import *
-import json
-import datetime
-import os
+from suyusys.models import *
+import json,datetime,os
 from scripts.salt_run import test
 from suyusys import views as sviews
 
 # Create your views here.
+
+def runzonemodules(request,template='saltstack/runzonemodules.html'):
+	platform = 'tmld_6Kwan'
+	server_list = server.objects.filter(platform=platform)
+	
+	for serverinfo in server_list:
+		print serverinfo
+	modules = ZoneModules.objects.all()
+	context = {
+		"sever_list":server_list,
+		"modules":modules,
+	}
+	return render(request,template,context)
 @csrf_exempt
 def command_page(request,template='command_page.html'):
 	idc_list = IDC.objects.all()
@@ -156,11 +168,3 @@ def SoftInstall(request):
         #savelog = CmdRunLog.objects.create(user=user_name, target=minions_list, cmd=cmd, total=len(minions_list.split(',')))
         ret={'jid':jid,'minion':minions_list,'savelogid':1}
         return  HttpResponse(json.dumps(ret))
-    
-
-				
-			
-		
-			
-			
-		
