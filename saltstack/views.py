@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.template import RequestContext, Context
 from django.core.urlresolvers import reverse
+from django.db.models import Q,F,Count
+from scripts.suyugm_db import GroupConcat
 from suyu.models import *
 from saltstack.models import *
 from suyusys.models import *
@@ -15,19 +17,22 @@ from scripts.salt_run import test
 from suyusys import views as sviews
 
 # Create your views here.
-
+@csrf_exempt
 def runzonemodules(request,template='saltstack/runzonemodules.html'):
-	platform = 'tmld_6Kwan'
-	server_list = server.objects.filter(platform=platform)
-	
-	for serverinfo in server_list:
-		print serverinfo
+	platform = 'tmld_ky'
+	#server_list = server.objects.filter(platform=platform)
+	server_lists = server.objects.filter(platform=platform).values('platform','area').annotate(count=Count(0),name=GroupConcat('name',separator='|')).order_by('area')
+	for server_list in server_lists:
+		print server_list
 	modules = ZoneModules.objects.all()
 	context = {
-		"sever_list":server_list,
+		"server_lists":server_lists,
 		"modules":modules,
 	}
 	return render(request,template,context)
+@csrf_exempt
+def xml_rpc(request,template='saltstack/rpc.html'):
+    return render(request,template)
 @csrf_exempt
 def command_page(request,template='command_page.html'):
 	idc_list = IDC.objects.all()
