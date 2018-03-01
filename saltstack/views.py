@@ -15,6 +15,7 @@ from suyusys.models import *
 import json,datetime,os
 from scripts.salt_run import test
 from suyusys import views as sviews
+from saltstack.function import *
 
 # Create your views here.
 @csrf_exempt
@@ -31,7 +32,20 @@ def runzonemodules(request,template='saltstack/runzonemodules.html'):
 	}
 	return render(request,template,context)
 @csrf_exempt
+
+# 远程进程管理
 def xml_rpc(request,template='saltstack/rpc.html'):
+    # pro_info = super_api('user', '123', '192.168.28.130', '9001')
+    # b = a.get_info('redis')
+    # c = a.start_process('nginx')
+    # d = a.stop_process('nginx')
+    # e = pro_info.get_info_all()
+    # print e
+    pro_info = handle_super_api('user', '123', '192.168.28.130', '9001')
+    print pro_info.handle_get_info_all()
+
+
+
     return render(request,template)
 @csrf_exempt
 def command_page(request,template='command_page.html'):
