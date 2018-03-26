@@ -13,7 +13,7 @@ class hefuinfoAdmin(admin.ModelAdmin):
 	
 class serverAdmin(admin.ModelAdmin):
 	list_display = ['server','name','platform','status','area']
-	
+	list_filter = ['platform']
 class newgameAdmin(admin.ModelAdmin):
 	list_display = ['ids','areas','game_id','progress','success','state','name']
 	

@@ -37,6 +37,8 @@ urlpatterns = [
  url(r'^saltmodule_deploy\.html',saltmodule),
  url(r'^minion/softinstall/',SoftInstall,name='SoftInstall'),
  url(r'^salt_tem_api$',sviews.salt_tem_api,name='salt_tem_api'),
+ url(r'^runzonemodules', runzonemodules, name='runzonemodules'),
+ url(r'^rpc$', xml_rpc, name='rpc'),
  
  # about redis
  url(r'^redisreport',views.redisreport, name='redisreport'),
@@ -47,19 +49,18 @@ urlpatterns = [
  # about suyusys
  url(r'^newindex',sviews.newindex,name='newindex'),
  url(r'^reindex',sviews.reindex,name='reindex'),
- url(r'^globa_setting', sviews.globa_setting),
+ url(r'^globa_setting', sviews.globa_setting,name='globa_setting'),
  url(r'^Notifications', sviews.Notifications),
- url(r'^File_upload', sviews.file_upload),
+ url(r'^File_upload', sviews.file_upload,name='File_upload'),
  url(r'^file_preview', sviews.file_preview,name='file_preview'),
  url(r'^ip_search$', sv.ip_search, name='ip_search'),
  #url(r'^action_search/(\d+)',include('suyusys.urls',namespace='suyusys')),
  url(r'^action_search',include('suyusys.urls')),
  #url(r'^action_search/(?P<key_word>\S+)', sv.action_search, name='action_search'),
- url(r'^Host_list', sviews.Host_list, name='Host_list'),
- url(r'^alter_host_status_api', sviews.alter_host_status_api, name='alter_host_status_api'),
- url(r'Host_info',sviews.Host_info,name='Host_info'),
+ url(r'^captcha/', include('captcha.urls')),
  url(r'^new_login$', sviews.new_login, name='new_login'),
  url(r'^login_out', sviews.login_out, name='login_out'),
+ url(r'^version', sviews.Version, name='version'),
  
  # about hefu
  url(r'^HefuInput', sviews.HefuInput),
@@ -82,6 +83,11 @@ urlpatterns = [
  url(r'^new_game_progress', ssviews.new_game_progress, name='new_game_progress'),
  url(r'^new_game_api', ssviews.new_game_api, name='new_game_api'),
  
+ # about host
+ url(r'^Host_list', sviews.Host_list, name='Host_list'),
+ url(r'^alter_host_status_api', sviews.alter_host_status_api, name='alter_host_status_api'),
+ url(r'Host_info/', sviews.Host_info, name='Host_info'),
+ url(r'api_host_info', sviews.api_host_info, name='api_host_info'),
  
  
 ]

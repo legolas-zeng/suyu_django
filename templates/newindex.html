@@ -48,6 +48,7 @@
                             <li class="{% block nav_host_list %}{% endblock %}"><a href="{% url 'Host_list' %}">主机列表</a></li>
                             <li><a href="#">添加主机</a></li>
                             <li><a href="#">主机执行</a></li>
+                            <li class="{% block nav_rpc %}{% endblock %}"><a href="{% url 'rpc' %}">进程管理</a></li>
                         </ul>
                     </li>
                     <li class="{% block nav_server_list %}{% endblock %}">
@@ -55,6 +56,9 @@
                         <ul class="nav nav-second-level collapse">
                             <li class="{% block nav_server_list_golden %}{% endblock %}"><a href="{% url 'server_list' %}">手游6k</a></li>
                         </ul>
+                    </li>
+                    <li class="{% block nav_runzonemodules %}{% endblock %}">
+                        <a href="{% url 'runzonemodules' %}"><i class="fa fa-magic"></i><span class="nav-label">区服执行</span></a>
                     </li>
                     <li>
                         <a><i class="fa fa-laptop"></i> <span class="nav-label">其他页面</span><span class="label label-info pull-right"></span><span class="fa arrow"></span></a>
@@ -95,13 +99,13 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="#"><i class="fa fa-magic"></i> <span class="nav-label">监控设置</span></a>
+                        <a href="{% url 'version' %}"><i class="fa fa-magic"></i> <span class="nav-label">版本管理</span></a>
                     </li>
                     <li class="{% block nav_file_command %}{% endblock %}">
                         <a href="#"><i class="fa fa-file"></i> <span class="nav-label">文件管理</span> <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li class="{% block nav_file_upload %}{% endblock %}">
-                                <a href="File_upload">文件上传</a>
+                                <a href="{% url 'File_upload' %}">文件上传</a>
                             </li>
                             <li class="{% block nav_file_preview %}{% endblock %}">
                                 <a href="{% url 'file_preview' %}">文件列表</a>
@@ -111,7 +115,7 @@
                         </ul>
                     </li>
                     <li class="{% block globa_setting %}{% endblock %}">
-                        <a href="globa_setting.html"><i class="fa fa-wrench"></i> <span class="nav-label">全局设置</span></a>
+                        <a href="{% url 'globa_setting' %}"><i class="fa fa-wrench"></i> <span class="nav-label">全局设置</span></a>
                     </li>
                 </ul>
             </div>
@@ -127,29 +131,29 @@
                 </div>
             </form>
         </div>
-            <ul class="nav navbar-top-links navbar-right">
-                <li>
-                    <span class="m-r-sm text-muted welcome-message">Welcome to SUYU</span>
-                </li>
-                <li class="dropdown">
-                    {% include "suyusys/Mailbox.html" %}
-                </li>
-                <li class="dropdown">
-                    {% include "suyusys/Notifications.html" %}
-                </li>
-                {% if request.user.is_staff %}
-                <li>
-                    <a href="admin" target="_blank">
-                        <i class="fa fa-sign-out"></i> 后台管理
-                    </a>
-                </li>
-                {% endif %}
-                <li>
-                    <a class="right-sidebar-toggle">
-                        <i class="fa fa-tasks"></i>
-                    </a>
-                </li>
-            </ul>
+        <ul class="nav navbar-top-links navbar-right">
+            <li>
+                <span class="m-r-sm text-muted welcome-message">Welcome to SUYU</span>
+            </li>
+            <li class="dropdown">
+                {% include "suyusys/Mailbox.html" %}
+            </li>
+            <li class="dropdown">
+                {% include "suyusys/Notifications.html" %}
+            </li>
+{#            {% if request.user.is_staff %}#}
+            <li>
+                <a href="admin" target="_blank">
+                    <i class="fa fa-sign-out"></i> 后台管理
+                </a>
+            </li>
+{#            {% endif %}#}
+            <li>
+                <a class="right-sidebar-toggle">
+                    <i class="fa fa-tasks"></i>
+                </a>
+            </li>
+        </ul>
         </nav>
         </div>
 

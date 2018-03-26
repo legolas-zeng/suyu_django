@@ -4,6 +4,13 @@ from django.contrib import admin
 from saltstack.models import *
 
 # Register your models here.
+class ZoneModulesAdmin(admin.ModelAdmin):
+    list_display = ['moduleCnName', 'moduleName', 'moduleIsUseId', 'moduleArgvCount', 'moduleArgv1', 'moduleArgv2',
+                    'moduleArgv3']
+    list_display_links = ['moduleCnName']
+    ordering = ['moduleCnName']
+    search_fields = ['moduleIsUseId']
+    
 class SaltServerAdmin(admin.ModelAdmin):
     list_display = ['url','username','password','role']
     list_filter=['role']
@@ -19,7 +26,8 @@ class SaltJobsModels(admin.ModelAdmin):
 class CmdRunLogModels(admin.ModelAdmin):
     list_display = ('user','time','target','cmd','total','runsuccess','runerror')
     search_fields = ('user','cmd')
-    
+
+admin.site.register(ZoneModules, ZoneModulesAdmin)
 admin.site.register(saltserver,SaltServerAdmin)
 admin.site.register(Minions,MinionsAdmin)
 admin.site.register(MinionGroup,MinionGroupAdmin)

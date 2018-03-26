@@ -5,7 +5,8 @@
 # Date   : 2017/3/1
 # Readme :
 
-from models import JsonInfo, Hosts
+from models import JsonInfo
+from NewGames.models import Hosts
 import json
 
 

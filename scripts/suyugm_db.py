@@ -7,12 +7,24 @@
 
 
 from database import CDataBase
-import time
-from tmsy.constant import DB_INFO, COUNTRY_LIST
-from tmsy.db import get_host_list
-import json
+import time,json
+from scripts.constant import DB_INFO,COUNTRY_LIST
+from django.db.models import Aggregate, CharField
 
 
+# TODO 聚合查询功能
+class GroupConcat(Aggregate):          # Aggregate的子类
+    # supports COUNT(distinct field)
+    function = 'GROUP_CONCAT'
+    template = '%(function)s(%(distinct)s%(expressions)s)'
+    def __init__(self, expression, distinct=False,ordering=None,separator=',', **extra):
+        super(GroupConcat, self).__init__(
+            expression,
+            distinct='DISTINCT ' if distinct else '',
+            ordering=' ORDER BY %s' %ordering if ordering is not None else '',
+            separator=' SEPARATOR "%s"' % separator,
+            output_field=CharField(),
+            **extra)
 
 class GmDB(object):
     def __init__(self, db_key):
@@ -43,53 +55,6 @@ class GmDB(object):
             area_dict[area_id] = line
         return area_dict
 
-    def get_server_list(self):
-        sql = "select app, app_id, platform, area, server, merge, `show`, prefix, name, status, DATE_FORMAT(sertime,'%%Y-%%m-%%d %%H:%%i:%%S') as sertime, ip, white, is_open "
-        sql += "from game_servers where game=%s order by app, platform, `area`+0, `show`+0"
-
-        # print sql
-        ret = self._conn.select_sql(sql, (self._game, ))
-        server_list = {}
-        platform_list = {}
-        ip_list = {}
-        area_dict = self.get_area_list()
-        host_list = get_host_list()
-        for line in ret:
-            platform = line['platform']
-            show = int(line['show'])
-            app = line['app']
-            area_id = line['area']
-            if area_id in area_dict.keys():
-                line['area'] = area_dict.get(area_id).get('name')
-            else:
-                line['area'] = 'N/A'
-            ip_port = line['ip'].split(':')
-            if len(ip_port) == 2:
-                ip, port = ip_port
-            else:
-                ip = ip_port[0]
-                port = 'N/A'
-            line['ip'] = ip
-            line['port'] = port
-            line['lanip'] = ip
-            host_info = host_list.get(ip, None)
-            if host_info:
-                line['lanip'] = host_info.hostLanIp
-
-            if app not in ip_list.keys():
-                ip_list[app] = []
-            if ip and ip not in ip_list[app]:
-                ip_list[app].append(ip)
-            if app not in platform_list.keys():
-                platform_list[app] = []
-            if platform and platform not in platform_list[app]:
-                platform_list[app].append(platform)
-            if app not in server_list.keys():
-                server_list[app] = {}
-            if platform and platform not in server_list[app].keys():
-                server_list[app][platform] = []
-            server_list[app][platform].append(line)
-        return platform_list, server_list, ip_list
 
     def get_open_server_list(self, state, sDate, eDate):
         open_sDate = sDate + ' 00:00:00'
@@ -100,7 +65,38 @@ class GmDB(object):
             sql += " and state=%s" % state
         ret = self._conn.select_sql(sql, ())
         return ret
+    
+    # TODO 工单查询
+    def get_open_server_count(self):
+        sql = "select count(0) from server_apply where game='%s' and state=1"%self._game
+        ret = self._conn.select_sql(sql,())
+        return ret
+    def get_hefu_server_count(self):
+        sql = "select count(0) from server_combine where game='%s' and status=1"%self._game
+        ret =self._conn.select_sql(sql,())
+        return ret
+    def get_open_server_notify(self):
+        sql = "select game,count(1) count from server_apply where state=1 GROUP BY game"
+        ret = self._conn.select_sql(sql,())
+        return ret
+    def get_hefu_notify(self):
+        sql = "select game,count(1) count from server_combine where status=1 GROUP BY game"
+        ret = self._conn.select_sql(sql,())
+        return ret
+    # TODO 区服列表查询
+    def get_game_server(self):
+        sql = "select area,count(1),concat(GROUP_CONCAT(name order by id separator '\"\,\"')) as 'result' from game_servers where game='%s' GROUP BY area"%self._game
+        ret = self._conn.select_sql(sql, ())
+        return ret
 
+    # TODO area 名字
+    def ger_platfrom(self,area_id):
+        sql = "select name from area where id = '%s'"%area_id
+        ret = self._conn.select_sql(sql, ())
+        return ret
+    
+    
+    
     def get_hefu_server_list(self, status, sDate, eDate):
         open_sDate = sDate + ' 00:00:00'
         open_eDate = eDate + ' 23:59:59'

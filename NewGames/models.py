@@ -59,8 +59,8 @@ class Hosts(models.Model):
 	hostLimit = models.IntegerField(verbose_name=u"主机最大区服数", default=5)
 	hostAlready = models.IntegerField(verbose_name=u"主机已安装区服数",default=0)
 	hostAddTime = models.DateTimeField(verbose_name=u"主机添加时间", auto_now_add=True)
-	hostexit = models.BooleanField(verbose_name=u"主机是否退还",default=0)
-	hostuse = models.BooleanField(verbose_name=u"主机是否可用",default=0)
+	hostexit = models.BooleanField(verbose_name=u"主机是否退还",default=1)
+	hostuse = models.BooleanField(verbose_name=u"主机是否可用",default=1)
 	
 
 	def __unicode__(self):

@@ -44,9 +44,20 @@ INSTALLED_APPS = [
     'NewGames',
     'djcelery',
     'search',
+    'captcha'
     #'silver_fox',
     #'suyu.templatetags',
 ]
+
+
+CAPTCHA_OUTPUT_FORMAT = u'%(text_field)s %(hidden_field)s %(image)s'
+CAPTCHA_NOISE_FUNCTIONS = ('captcha.helpers.noise_null',)
+CAPTCHA_IMAGE_SIZE = (100, 25)
+CAPTCHA_BACKGROUND_COLOR = '#ffffff'
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
+CAPTCHA_LENGTH = 4
+CAPTCHA_TIMEOUT = 1
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

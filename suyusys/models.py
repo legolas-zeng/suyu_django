@@ -73,3 +73,11 @@ class server(models.Model):
 	class Meta:
 		verbose_name = u'游戏列表'
 		verbose_name_plural = u'游戏详情'
+class Version(models.Model):
+	versionid = models.CharField(max_length=255,verbose_name=u"版本号")
+	updatatime = models.DateTimeField(verbose_name=u"更新时间",auto_now_add=True)
+	server = models.ForeignKey('server')
+	# updatazone = models.CharField(verbose_name=u"更新范围",max_length=255)
+	# platform = models.CharField(max_length=255, verbose_name=u"平台")
+	
+	

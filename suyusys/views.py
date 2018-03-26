@@ -5,23 +5,25 @@ from django.http import HttpResponse,HttpResponseRedirect,JsonResponse,request,H
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.db.models import Q
+from django.db.models import Q,F,Count
+from scripts.suyugm_db import GroupConcat
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.generic.base import View
 from django.template import RequestContext, Context
 from django.core.urlresolvers import reverse
-from django import forms
 from suyu.models import *
 from suyusys.models import *
-from suyu.models import redisinfo
 import json,sys,urllib,os,MySQLdb,datetime
 from scripts.constant import DB_INFO,GM_MODULE,COUNTYR
 from scripts import hefu_test
 from function import *
 from search import action
 from string import join
-from suyusys import forms
+from suyusys.forms import RegisterForm
+from captcha.fields import CaptchaField
 
 # Create your views here.
+
 
 @csrf_exempt
 def new_login(request,template='suyusys/new_login.html'):
@@ -48,6 +50,8 @@ def new_login(request,template='suyusys/new_login.html'):
 		'next': next,
 	}
 	return render(request,template,context)
+
+
 @login_required
 def login_out(request):
 	logout(request)
@@ -55,6 +59,7 @@ def login_out(request):
 @login_required
 def alter_passwd(request,template='suyusys/alter_passwd.html'):
 	pass
+
 @login_required
 def newindex(request,template='newindex.html'):
 	db_key = 'china_gmdb'
@@ -309,7 +314,6 @@ def game_action(request):
 		
 		return HttpResponse(json.dumps(1))
 
-
 def Host_list(request,template='suyusys/Host_list.html'):
 	req = request.GET.get('country','all')
 	hostexit = request.GET.get('hostexit','all')
@@ -369,13 +373,30 @@ def alter_host_status_api(request):
 				'status': 0
 			}
 		return JsonResponse(context)
+	
 def Host_info(request,template='suyusys/Host_info.html'):
 	ip = request.GET['ip']
 	print ip
+	from scripts.ansible_api import exec_ansible
+	host_info = exec_ansible(module='setup',args='',host=ip)
+	res = ansible_handle(host_info)
 	return render(request,template)
+
+
+@csrf_exempt
+def api_host_info(request):
+	if request.method == 'POST':
+		req = json.loads(request.body)
+		res = ansible_handle(req)
+	return HttpResponse('1')
+
+
 @csrf_exempt
 def salt_tem_api(request):
 	if request.method == 'POST':
 		req = json.loads(request.body)
 		print req
 	return HttpResponse('1')
+
+def Version(request,template='suyusys/version.html'):
+	return render(request,template)
