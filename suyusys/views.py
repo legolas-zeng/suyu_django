@@ -13,7 +13,7 @@ from django.template import RequestContext, Context
 from django.core.urlresolvers import reverse
 from suyu.models import *
 from suyusys.models import *
-import json,sys,urllib,os,MySQLdb,datetime
+import json,sys,urllib,os,MySQLdb,datetime,time
 from scripts.constant import DB_INFO,GM_MODULE,COUNTYR
 from scripts import hefu_test
 from function import *
@@ -21,6 +21,7 @@ from search import action
 from string import join
 from suyusys.forms import RegisterForm
 from captcha.fields import CaptchaField
+
 
 # Create your views here.
 
@@ -120,6 +121,8 @@ def Api_echart_redis(request,template='apichartredis.html'):
 def globa_setting(request,template='suyusys/globa_setting.html'):
 	'''先读取存储的状态'''
 	'''再存储输入的状态'''
+	from tasks import celery_task
+	celery_task()
 	return render(request,template)
 def Notifications(request,template='suyusys/Notifications.html'):
 	pass
@@ -382,14 +385,12 @@ def Host_info(request,template='suyusys/Host_info.html'):
 	res = ansible_handle(host_info)
 	return render(request,template)
 
-
 @csrf_exempt
 def api_host_info(request):
 	if request.method == 'POST':
 		req = json.loads(request.body)
 		res = ansible_handle(req)
 	return HttpResponse('1')
-
 
 @csrf_exempt
 def salt_tem_api(request):

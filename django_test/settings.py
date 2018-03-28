@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import pymysql
+#import djcelery
+from celery.schedules import crontab
+
 pymysql.install_as_MySQLdb()  
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,7 +45,7 @@ INSTALLED_APPS = [
     'saltstack',
     'suyusys',
     'NewGames',
-    'djcelery',
+    #'djcelery',
     'search',
     'captcha'
     #'silver_fox',
@@ -166,3 +169,21 @@ STATICFILES_DIRS = [
 ('images',os.path.join(STATIC_ROOT,'img').replace('\\','/')),
 ('upload',os.path.join(STATIC_ROOT,'upload').replace('\\','/')),
 ]
+
+
+# djcelery.setup_loader()
+# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERY_IMPORTS = ('suyusys.tasks', )
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# from datetime import timedelta
+# CELERYBEAT_SCHEDULE = {
+# 'run_test_tasks': {
+#             'task': 'suyusys.tasks.celery_task',
+#             'schedule': timedelta(seconds=3),
+#             "args": ()
+#     },
+# }
