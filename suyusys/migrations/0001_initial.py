@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('port', models.CharField(max_length=10, verbose_name='\u7aef\u53e3')),
                 ('monitor', models.CharField(choices=[('Ture', 'ON'), ('False', 'OFF')], default='Ture', max_length=30, null=True, verbose_name='\u662f\u5426\u5f00\u542f\u76d1\u63a7')),
                 ('tags', models.CharField(blank=True, max_length=50, null=True)),
-                ('role', models.CharField(choices=[('master', 'master'), ('slave', 'slave')], default='slave', max_length=30, verbose_name='\u89d2\u8272')),
+                ('role', models.CharField(choices=[('main', 'main'), ('subordinate', 'subordinate')], default='subordinate', max_length=30, verbose_name='\u89d2\u8272')),
                 ('alive', models.BooleanField(default=False, verbose_name='\u662f\u5426\u5728\u7ebf')),
                 ('connected', models.CharField(default=0, max_length=255, verbose_name='\u8fde\u63a5\u6570')),
             ],

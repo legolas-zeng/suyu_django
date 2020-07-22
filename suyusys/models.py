@@ -10,14 +10,14 @@ class DbServersRedis(models.Model):
 		('False', 'OFF'),
 	)
 	Status_2 = (
-		('master', 'master'),
-		('slave', 'slave'),
+		('main', 'main'),
+		('subordinate', 'subordinate'),
 	)
 	hostip = models.GenericIPAddressField(max_length=255,default='0.0.0.0',verbose_name=u"主机IP")
 	port = models.CharField(max_length=10,verbose_name=u"端口")
 	monitor = models.CharField(choices=Status, null=True,default='Ture',verbose_name=u"是否开启监控",max_length=30)
 	tags = models.CharField(max_length=50, blank=True, null=True)
-	role = models.CharField(choices=Status_2,max_length=30,default='slave',verbose_name=u"角色")
+	role = models.CharField(choices=Status_2,max_length=30,default='subordinate',verbose_name=u"角色")
 	alive = models.BooleanField(default=False,verbose_name=u"是否在线")
 	connected = models.CharField(max_length=255, default=0,verbose_name=u"连接数")
 	def __unicode__(self):
